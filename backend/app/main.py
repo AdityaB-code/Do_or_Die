@@ -5,21 +5,24 @@ import os
 
 app = FastAPI()
 
-# Get the absolute path to frontend folder
-frontend_path = os.path.join(os.path.dirname(__file__), "../../frontend")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Serve static files (CSS, JS)
-app.mount("/css", StaticFiles(directory=os.path.join(frontend_path, "css")), name="css")
-app.mount("/js", StaticFiles(directory=os.path.join(frontend_path, "js")), name="js")
+FRONTEND_DIST = os.path.abspath(
+    os.path.join(BASE_DIR, "../../frontend/dist")
+)
 
+# Serve React assets
+app.mount(
+    "/assets",
+    StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")),
+    name="assets",
+)
 
-# Serve HTML page
 @app.get("/")
-def serve_index():
-    return FileResponse(os.path.join(frontend_path, "index.html"))
+def serve_react():
+    return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
 
 
-# Your API endpoint
 @app.get("/api/hello")
-def read_root():
+def hello():
     return {"message": "Hello World"}
